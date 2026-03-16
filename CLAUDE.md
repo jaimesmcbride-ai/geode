@@ -63,10 +63,10 @@ python3 -m pytest --forked --tb=short
 - Must run from the build directory so `geode/math/__init__.py` doesn't shadow stdlib `math`
 - `--forked` is still required for process isolation (some tests use random seeds and SIGABRT would kill the runner)
 - `setup.cfg` uses `[tool:pytest]` section
-- **Expected results: 165 passed, 0 failed, 2 skipped** (as of native ARM64 build)
+- **Expected results: 166 passed, 0 failed, 1 skipped** (as of native ARM64 build)
 
 ### Skipped tests
-- `test_refcount`: Deferred reference counting in Python 3.12+
+- `test_worker`: Worker inter-process tests were never completed (skipped since 2017); `Worker.py` is unused elsewhere in the codebase
 - OpenMesh tests: `openmesh_enabled()` returns False when OpenMesh is not installed
 
 ## CMake build system
