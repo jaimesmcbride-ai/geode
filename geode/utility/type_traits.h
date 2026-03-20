@@ -41,7 +41,7 @@ using std::result_of;
 // Provide is_trivially_destructible as alias of has_trivial_destructor or manually implement it
 #ifdef __GNUC__
 // The following don't necessary exist on Mac, so implement them ourselves if possible
-template<class T> struct is_trivially_destructible : public mpl::bool_<__has_trivial_destructor(T)> {};
+template<class T> struct is_trivially_destructible : public mpl::bool_<__is_trivially_destructible(T)> {};
 #else
 using std::is_trivially_destructible;
 #endif

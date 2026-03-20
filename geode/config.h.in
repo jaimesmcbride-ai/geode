@@ -4,7 +4,6 @@
 #cmakedefine GEODE_THREAD_SAFE true
 #cmakedefine __SSE__
 #cmakedefine GEODE_GMP
-#cmakedefine GEODE_NEON
 #cmakedefine GEODE_OPENMESH
 
 #include <geode/python/config.h>

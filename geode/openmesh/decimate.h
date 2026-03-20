@@ -47,7 +47,7 @@ public:
   double min_quality() { return minquality; }
   void min_quality(double quality) { minquality = quality; }
 
-  virtual float collapse_priority(const OpenMesh::Decimater::CollapseInfoT<MeshT> &ci) {
+  float collapse_priority(const OpenMesh::Decimater::CollapseInfoT<MeshT> &ci) override {
 
     bool collapse_allowed = true;
 
@@ -97,7 +97,7 @@ public:
     max_error = error;
   }
 
-  virtual float collapse_priority(const OpenMesh::Decimater::CollapseInfoT<MeshT> &ci) {
+  float collapse_priority(const OpenMesh::Decimater::CollapseInfoT<MeshT> &ci) override {
 
     typedef Vector<real,3> TV;
 

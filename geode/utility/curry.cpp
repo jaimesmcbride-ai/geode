@@ -40,19 +40,19 @@ GEODE_UNUSED static void curry_test() {
 
   // Test free functions
   auto fa = curry(f,a);
-  C(fa(b));
+  (void)C(fa(b));
 
   // Test nonconst member functions
   auto Gga = curry(&G::g,&g,a);
-  C(Gga(b));
+  (void)C(Gga(b));
 
   // Test const member functions
   auto Gha = curry(&G::h,const_cast<const G*>(&g),a);
-  C(Gha(b));
+  (void)C(Gha(b));
 
   // Test function objects
   auto ga = curry(g,a);
-  C(ga(b));
+  (void)C(ga(b));
 }
 
 }

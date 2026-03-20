@@ -77,9 +77,7 @@ min_interior_edge(const TriangleTopology& mesh, RawField<const TV,VertexId> X, c
   }
   HalfedgeId min_e;
   T min_f = 0; // Initial value unused
-  int count = 0;
   do {
-    count++;
     const auto fe = f(e);
     if (!min_e.valid() || min_f > fe) {
       min_f = fe;

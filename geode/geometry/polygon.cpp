@@ -348,12 +348,8 @@ Tuple<Array<Vec2>,Array<int>> offset_polygon_with_correspondence(RawArray<const 
   int mo = offset_poly.size();
 
   bool changed;
-  int iter = 0;
   do {
-    iter++;
     changed = false;
-
-    //std::cout << "cleaning polygon with " << m << " points, iteration " << iter << std::endl;
 
     for (int i = 0; i < mo; ++i) {
 

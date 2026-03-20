@@ -1679,7 +1679,7 @@ vector<Ref<TriMesh> > TriMesh::nested_components() const{
   vector<Ref<TriMesh> > meshes = component_meshes();
 
   vector<real> volumes;
-  for (const Ref<TriMesh> mesh : meshes){
+  for (const Ref<TriMesh>& mesh : meshes){
     mesh->request_face_normals();
     mesh->request_vertex_normals();
     mesh->update_normals();
@@ -1733,7 +1733,7 @@ vector<Ref<TriMesh> > TriMesh::nested_components() const{
 
   vector<Ref<TriMesh> > output;
   vector<int> redundant;
-  for(const pair<int,vector<int> >& p : nested){
+  for(const auto& p : nested){
     Ref<TriMesh> m = meshes[p.first];
     for(const int& hole : p.second){
       m->add_mesh(*meshes[hole]);
