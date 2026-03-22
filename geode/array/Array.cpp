@@ -45,6 +45,7 @@ ARRAY_CONVERSIONS(2,int)
 ARRAY_CONVERSIONS(2,unsigned long)
 // Signed fixed width integer types
 ARRAY_CONVERSIONS(1,ENABLE_IF_UNIQUE(int64_t, int, long))
+ARRAY_CONVERSIONS(1,ENABLE_IF_UNIQUE(long long, int, long))
 // Unsigned fixed width integer types
 ARRAY_CONVERSIONS(1,uint8_t)
 ARRAY_CONVERSIONS(1,uint16_t)
