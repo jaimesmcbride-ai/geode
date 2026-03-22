@@ -283,7 +283,7 @@ private:
     return to_python(result);
   }
 
-  static long hash(PyObject* self) {
+  static Py_hash_t hash(PyObject* self) {
     return geode::hash(from_python<const T&>(self));
   }
 };
