@@ -14,54 +14,60 @@ MinGW is better supported by existing guards than MSVC. MSYS2 provides a Unix-li
 
 If MinGW stalls, try MSVC as a secondary path.
 
-## Phase 1: Install prerequisites
+## Phase 1: Install prerequisites — COMPLETE
 
-- [ ] Install [MSYS2](https://www.msys2.org/) from official site
-- [ ] Open MSYS2 MINGW64 shell and run:
-  ```
-  pacman -Syu
-  pacman -S mingw-w64-x86_64-cmake mingw-w64-x86_64-gcc mingw-w64-x86_64-ninja
-  pacman -S mingw-w64-x86_64-gmp
-  pacman -S mingw-w64-x86_64-libpng mingw-w64-x86_64-libjpeg-turbo
-  ```
-- [ ] Check if OpenMesh is available: `pacman -Ss openmesh` — if not, note it and build C++ without OpenMesh first (`-DGEODE_OPENMESH=OFF` or it will auto-detect absent)
-- [ ] Check Python: `python --version` in MSYS2 shell; install if needed: `pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-numpy`
-- [ ] Record all installed package versions
+MSYS2 installed at `C:\msys64` with all dependencies. OpenMesh not available in MSYS2; built without it.
 
-## Phase 2: C++ only build (no Python)
+| Package | Version |
+|---------|---------|
+| GCC | 15.2.0 |
+| CMake | 4.2.3 |
+| Ninja | 1.13.2 |
+| Python | 3.14.3 |
+| NumPy | 2.4.1 |
+| GMP | installed (static + shared) |
+| libpng | 1.6.55 |
+| libjpeg-turbo | 80 |
+| OpenMesh | not available |
 
-Start here to isolate C++ issues from Python binding issues.
+## Phase 2: C++ only build (no Python) — COMPLETE
 
-- [ ] From MSYS2 MINGW64 shell in the repo root:
-  ```
-  cmake -B build-win -G "Ninja" -DGEODE_NATIVE_ARCH=OFF -DGEODE_DISABLE_PYTHON=ON
-  ```
-- [ ] Capture full cmake configure output — note GMP, OpenMesh, PNG, JPEG detection results
-- [ ] If configure succeeds: `cmake --build build-win`
-- [ ] Record all errors with file and line number
+CMake configure succeeded with no issues. GMP, PNG, JPEG all auto-detected.
 
-## Phase 3: Python bindings (if Phase 2 succeeds)
+One fix required:
+- `geode/utility/type_traits.h`: GCC 15 broke the `__is_trivially_destructible` builtin wrapper in `mpl::bool_`. Replaced with `std::is_trivially_destructible` (C++17 standard).
 
-- [ ] Re-run cmake with Python enabled:
-  ```
-  cmake -B build-win -G "Ninja" -DGEODE_NATIVE_ARCH=OFF -DGEODE_DISABLE_PYTHON=OFF
-  cmake --build build-win
-  ```
-- [ ] Note any `.pyd` vs `.so` naming issues (Python extensions on Windows use `.pyd`)
-- [ ] If build succeeds: `cd build-win && python -m pytest --forked --tb=short`
-- [ ] Record test results and any `GEODE_NOT_IMPLEMENTED()` hits
+## Phase 3: Python bindings — COMPLETE
 
-## Expected issues
+Two build fixes:
+- `geode/python/Class.h`: `tp_hash` callback must return `Py_hash_t` (not `long`) — Windows `long` is 32-bit.
+- `GeodeSupport.cmake`: Set `.pyd` suffix for Python extension modules on `WIN32`.
 
-| Issue | Where | Notes |
-|-------|-------|-------|
-| GMP not found by cmake | `CMakeLists.txt` | May need `-DGMP_LIBRARY=C:/msys64/mingw64/lib/libgmp.dll.a` hint |
-| OpenMesh not in MSYS2 | `geode/openmesh/` | May need to build from source or skip |
-| `GEODE_NOT_IMPLEMENTED()` at runtime | `geode/utility/process.cpp` | backtrace, FP exceptions — confirm tests xfail, not crash |
-| DLL symbol visibility | linker | Missing `GEODE_EXPORT` on any recently-added symbols |
-| Python extension naming | cmake | `.so` → `.pyd` may need cmake adjustment |
-| `uint128` on MinGW | `geode/random/` | Confirm MinGW-w64 supports `__uint128_t` on x86_64 |
-| `OM_STATIC_BUILD` mismatch | `geode/openmesh/config.h` | Static vs dynamic OpenMesh linking |
+Import fixes:
+- Removed legacy `geode_all` import paths from all `__init__.py` files — all platforms now use `geode_wrap`.
+
+**Test results: 166 passed, 0 failed, 1 skipped**
+
+## Expected issues — actual results
+
+| Issue | Expected | Actual |
+|-------|----------|--------|
+| GMP not found by cmake | Might need hints | Auto-detected, no issue |
+| OpenMesh not in MSYS2 | Skip or build from source | Skipped, built without it (as designed) |
+| `GEODE_NOT_IMPLEMENTED()` at runtime | Tests might crash | Not triggered by any test |
+| DLL symbol visibility | Missing exports | No issue |
+| Python extension naming | `.so` → `.pyd` | Fixed in `GeodeSupport.cmake` |
+| `uint128` on MinGW | Might not support `__uint128_t` | No issue — MinGW-w64 x86_64 supports it |
+| `OM_STATIC_BUILD` mismatch | Linking issues | N/A (no OpenMesh) |
+
+### Issues NOT predicted
+
+| Issue | Where | Fix |
+|-------|-------|-----|
+| `is_trivially_destructible` GCC 15 | `type_traits.h` | Use `std::is_trivially_destructible` |
+| `tp_hash` returns wrong type | `Class.h` | Use `Py_hash_t` instead of `long` |
+| `geode_all` import paths | all `__init__.py` | Removed, all platforms use `geode_wrap` |
+| `NPY_LONGLONG` not handled | `Prop.cpp`, `Vector.cpp`, `Array.cpp` | Added `long long` template instantiations |
 
 ## Files to watch
 
@@ -77,4 +83,31 @@ Start here to isolate C++ issues from Python binding issues.
 
 For each phase: full cmake output, build errors with file/line, test results. Save to `build-windows.log`. Note exact MSYS2 package versions for reproducibility.
 
-**Last updated:** 2026-03-20 (initial)
+## Phase 4: Fix int64 (long long) support on Windows
+
+On Windows (LLP64), `sizeof(long)==4` and `sizeof(long long)==8`. numpy's default int is `int64` which maps to `NPY_LONGLONG`. Most of the `long long` plumbing already exists (`FromPython<long long>`, `ToPython`, `NumpyScalar<long long>`, `NdArray<long long>` conversions). The gap is:
+
+- [x] **`geode/value/Prop.cpp`**: `make_prop_shape` switch needs `NPY_LONGLONG` case. Can't use a regular `case` because `NPY_LONG == NPY_LONGLONG` as enum values on LP64 platforms (duplicate case error). Use runtime `sizeof(long)` check before the switch.
+- [x] **`geode/vector/Vector.cpp`**: Need `GEODE_DEFINE_VECTOR_CONVERSIONS` for `long long` (2D, 3D, 4D) — `make_prop_shape_helper<long long>` instantiates `Vector<long long, N>`. Use `ENABLE_IF_UNIQUE` pattern to avoid duplicate instantiation on LP64 where `long == long long`.
+- [x] **`geode/array/Array.cpp`**: `ENABLE_IF_UNIQUE(int64_t, int, long)` already handles 1D. Verify 2D int64 is covered if needed by `make_prop_shape_helper` (`Array<const Vector<long long, N>>`).
+
+### Investigation findings
+
+| Component | long long support | Status |
+|-----------|------------------|--------|
+| `FromPython<long long>` | Already in `from_python.cpp` | OK |
+| `ToPython(long long)` | Already in `to_python.h` | OK |
+| `NumpyScalar<long long>` | Already in `numpy-types.h` | OK |
+| `NdArray<long long>` conversions | Already in `NdArray.cpp` | OK |
+| `Array<long long>` (1D) | `ENABLE_IF_UNIQUE` in `Array.cpp` | OK |
+| `Vector<long long, N>` conversions | Missing in `Vector.cpp` | FIXED |
+| `make_prop_shape` type dispatch | Missing `NPY_LONGLONG` | FIXED |
+| `module.cpp` static assertions | Already checks `NPY_LONGLONG` | OK |
+| `numpy.cpp` fill_numpy_header | Already handles `LONGLONG` | OK |
+
+### Preprocessor gotcha
+
+`NPY_LONG` and `NPY_LONGLONG` are **enum values**, not `#define` macros. `#if NPY_LONGLONG != NPY_LONG` evaluates both as 0 (undefined preprocessor symbols) and always takes the `#else` branch. Use `sizeof(long) < sizeof(long long)` or `std::is_same` for compile-time dispatch, or `ENABLE_IF_UNIQUE` for template instantiation dedup.
+
+**Last updated:** 2026-03-21 (Phase 4 — int64/long long investigation and fix)
+**Previously:** 2026-03-20 (initial)
