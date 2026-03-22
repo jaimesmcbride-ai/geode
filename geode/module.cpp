@@ -38,6 +38,9 @@ GEODE_PYTHON_MODULE(geode_wrap) {
 #ifdef GEODE_GMP
   GEODE_WRAP(exact)
 #endif
+#ifdef GEODE_OPENMESH
+  GEODE_WRAP(openmesh)
+#endif
 
   GEODE_FUNCTION(has_exact)
 }
