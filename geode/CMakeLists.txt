@@ -74,9 +74,9 @@ target_include_directories(
 if (GEODE_PYTHON)
   target_include_directories(
     geode
-    INTERFACE
-      ${PYTHON_INCLUDE_DIRS}
-      ${NUMPY_INCLUDE_DIRS}
+    SYSTEM INTERFACE
+      $<BUILD_INTERFACE:${PYTHON_INCLUDE_DIRS}>
+      $<BUILD_INTERFACE:${NUMPY_INCLUDE_DIRS}>
   )
 endif()
 
