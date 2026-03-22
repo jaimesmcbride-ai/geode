@@ -82,9 +82,11 @@ endif()
 
 set_target_properties(geode PROPERTIES BUILD_WITH_INSTALL_RPATH 1 INSTALL_NAME_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
-install(TARGETS geode EXPORT Geode DESTINATION lib)
-install(EXPORT Geode FILE GeodeConfig.cmake DESTINATION cmake)
-export(TARGETS geode FILE ${CMAKE_CURRENT_BINARY_DIR}/GeodeConfig.cmake)
+if(NOT GEODE_SKIP_INSTALL)
+  install(TARGETS geode EXPORT Geode DESTINATION lib)
+  install(EXPORT Geode FILE GeodeConfig.cmake DESTINATION cmake)
+  export(TARGETS geode FILE ${CMAKE_CURRENT_BINARY_DIR}/GeodeConfig.cmake)
+endif()
 
 if (GMP_FOUND)
   target_include_directories(
@@ -111,7 +113,7 @@ if (OPENMESH_FOUND)
 
   target_link_libraries(
     geode
-    PUBLIC
+    PRIVATE
       ${OPENMESH_LIBRARIES}
   )
 else()

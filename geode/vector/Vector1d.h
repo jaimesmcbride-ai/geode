@@ -3,6 +3,7 @@
 //#####################################################################
 #pragma once
 
+#include <limits>
 #include <geode/vector/ScalarPolicy.h>
 #include <geode/vector/Vector0d.h>
 #include <geode/math/inverse.h>
