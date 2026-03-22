@@ -1,10 +1,6 @@
 from __future__ import absolute_import
 
-import platform
-if platform.system()=='Windows':
-  from .. import geode_all as geode_wrap
-else:
-  from .. import geode_wrap
+from .. import geode_wrap
 from numpy import inf
 
 def openmesh_enabled():

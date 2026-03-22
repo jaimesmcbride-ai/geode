@@ -2,6 +2,7 @@
 // Class Vector
 //#####################################################################
 #include <geode/vector/convert.h>
+#include <type_traits>
 
 namespace geode {
 
@@ -11,6 +12,12 @@ GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,4,int)
 GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,2,long)
 GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,3,long)
 GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,4,long)
+
+// long long is always a distinct type from long in C++, even on LP64 where both are 64-bit.
+// Needed on Windows (LLP64) where long is 32-bit and int64 arrays use long long.
+GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,2,long long)
+GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,3,long long)
+GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,4,long long)
 
 GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,2,short int)
 GEODE_DEFINE_VECTOR_CONVERSIONS(GEODE_CORE_EXPORT,3,short int)

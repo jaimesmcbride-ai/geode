@@ -9,15 +9,10 @@
 from __future__ import (division,absolute_import)
 
 import builtins
-import platform
 import numpy
 from numpy import *
-if platform.system()=='Windows':
-  from .. import geode_all as geode_wrap
-  from ..geode_all import *
-else: 
-  from .. import geode_wrap
-  from ..geode_wrap import *
+from .. import geode_wrap
+from ..geode_wrap import *
 from .Matrix import Matrix
 geode_wrap._set_matrix_type(Matrix)
 

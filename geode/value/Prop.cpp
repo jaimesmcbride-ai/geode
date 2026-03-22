@@ -85,10 +85,11 @@ static Ref<PropBase> make_prop_shape(const string& n, PyObject* value,
     #define TYPE_CASE(E,T) \
       case E: \
         return make_prop_shape_helper(n,from_python<NdArray<const T>>(a.get()),shape);
-    TYPE_CASE(NPY_INT,    npy_int)
-    TYPE_CASE(NPY_LONG,   npy_long)
-    TYPE_CASE(NPY_FLOAT,  npy_float)
-    TYPE_CASE(NPY_DOUBLE, npy_double)
+    TYPE_CASE(NPY_INT,      npy_int)
+    TYPE_CASE(NPY_LONG,     npy_long)
+    TYPE_CASE(NPY_LONGLONG, long long)
+    TYPE_CASE(NPY_FLOAT,    npy_float)
+    TYPE_CASE(NPY_DOUBLE,   npy_double)
     #undef TYPE_CASE
   }
   throw NotImplementedError(format("make_prop_shape: unhandled dtype %s",

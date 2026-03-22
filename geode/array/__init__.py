@@ -1,12 +1,7 @@
 from __future__ import absolute_import
 
-import platform
 from numpy import *
-if platform.system()=='Windows':
-  from .. import geode_all as geode_wrap
-  from ..geode_all import *
-else:
-  from .. import geode_wrap
+from .. import geode_wrap
 
 class Nested(object):
   """Represents a nested array of arrays using flat storage for efficiency.

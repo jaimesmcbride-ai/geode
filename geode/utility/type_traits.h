@@ -38,13 +38,7 @@ using std::remove_pointer;
 using std::remove_reference;
 using std::result_of;
 
-// Provide is_trivially_destructible as alias of has_trivial_destructor or manually implement it
-#ifdef __GNUC__
-// The following don't necessary exist on Mac, so implement them ourselves if possible
-template<class T> struct is_trivially_destructible : public mpl::bool_<__is_trivially_destructible(T)> {};
-#else
 using std::is_trivially_destructible;
-#endif
 
 // Add a few more useful ones
 template<class T> struct remove_const_reference : public remove_const<typename remove_reference<T>::type> {};

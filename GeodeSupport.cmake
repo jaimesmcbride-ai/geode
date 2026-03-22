@@ -60,6 +60,13 @@ function(add_python_module _name)
     PROPERTIES
       PREFIX ""
   )
+  if(WIN32)
+    set_target_properties(
+      ${_name}
+      PROPERTIES
+        SUFFIX ".pyd"
+    )
+  endif()
 endfunction()
 
 set(GEODE_MODULES)
@@ -155,6 +162,14 @@ macro(ADD_GEODE_MODULE _name)
         -Wno-unused-result
         -fPIC
     )
+
+    # GCC requires -frounding-math to prevent the optimizer from assuming FE_TONEAREST
+    # and reordering/folding FP ops across fesetround() calls.  This is needed for
+    # correct interval arithmetic in geode/exact/Interval.h.  Clang uses a bitcast
+    # workaround in safe_neg() instead and doesn't need the flag.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      target_compile_options(${_name} PUBLIC -frounding-math)
+    endif()
 
     CHECK_CXX_COMPILER_FLAG(-Wno-undefined-var-template COMPILER_CHECKS_UNDEFINED_VAR_TEMPLATE)
     if (COMPILER_CHECKS_UNDEFINED_VAR_TEMPLATE)
