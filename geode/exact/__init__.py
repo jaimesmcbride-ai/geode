@@ -1,15 +1,10 @@
 '''Exact geometric computation'''
 
 from __future__ import absolute_import
-import platform
 from geode.array import *
 from geode.mesh import merge_meshes, meshify
-if platform.system()=='Windows':
-  from ..geode_all import *
-  from .. import geode_all as geode_wrap
-else:
-  from .. import geode_wrap
-  from ..geode_wrap import *
+from .. import geode_wrap
+from ..geode_wrap import *
 
 if not has_exact():
   raise ImportError('geode/exact is unavailable since geode was compiled without gmp support')

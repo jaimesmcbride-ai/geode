@@ -60,6 +60,13 @@ function(add_python_module _name)
     PROPERTIES
       PREFIX ""
   )
+  if(WIN32)
+    set_target_properties(
+      ${_name}
+      PROPERTIES
+        SUFFIX ".pyd"
+    )
+  endif()
 endfunction()
 
 set(GEODE_MODULES)

@@ -2,12 +2,7 @@
 
 from __future__ import (with_statement,absolute_import)
 from contextlib import contextmanager
-import platform
-
-if platform.system()=='Windows':
-  from ..import geode_all as geode_wrap
-else:
-  from .. import geode_wrap
+from .. import geode_wrap
 
 configure = geode_wrap.log_configure
 initialized = geode_wrap.log_initialized
