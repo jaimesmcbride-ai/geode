@@ -92,6 +92,7 @@ jobs:
             mingw-w64-x86_64-libpng
             mingw-w64-x86_64-libjpeg-turbo
             mingw-w64-x86_64-python
+            mingw-w64-x86_64-python-pip
             mingw-w64-x86_64-python-numpy
 
       - name: Set up Python test deps
