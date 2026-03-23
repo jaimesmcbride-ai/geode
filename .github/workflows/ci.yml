@@ -88,7 +88,7 @@ jobs:
             mingw-w64-x86_64-python-pytest
 
       - name: Configure
-        run: cmake -G Ninja --preset ci
+        run: cmake -G Ninja --preset ci -DPython3_EXECUTABLE=$(which python3)
 
       - name: Build
         run: cmake --build --preset ci
