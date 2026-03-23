@@ -5,62 +5,71 @@ on:
   pull_request:
 
 jobs:
-  # ubuntu and macos disabled while debugging Windows CI
-  # ubuntu:
-  #   name: Ubuntu x86_64
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install dependencies
-  #       run: |
-  #         sudo apt-get update -qq
-  #         sudo apt-get install -y -qq cmake libgmp-dev libopenmesh-dev libpng-dev libjpeg-dev python3-pip python3-venv
-  #     - name: Set up Python venv
-  #       run: |
-  #         python3 -m venv .venv
-  #         source .venv/bin/activate
-  #         pip install --upgrade pip --quiet
-  #         pip install --quiet numpy pytest pytest-forked scipy
-  #     - name: Configure
-  #       run: |
-  #         source .venv/bin/activate
-  #         cmake --preset ci
-  #     - name: Build
-  #       run: |
-  #         source .venv/bin/activate
-  #         cmake --build --preset ci
-  #     - name: Test
-  #       run: |
-  #         source .venv/bin/activate
-  #         cd build/ci
-  #         python3 -m pytest --forked --tb=short
+  ubuntu:
+    name: Ubuntu x86_64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-  # macos:
-  #   name: macOS ARM64
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install dependencies
-  #       run: brew install cmake gmp open-mesh libpng libjpeg
-  #     - name: Set up Python venv
-  #       run: |
-  #         python3 -m venv .venv
-  #         source .venv/bin/activate
-  #         pip install --upgrade pip --quiet
-  #         pip install --quiet numpy pytest pytest-forked scipy
-  #     - name: Configure
-  #       run: |
-  #         source .venv/bin/activate
-  #         cmake --preset ci
-  #     - name: Build
-  #       run: |
-  #         source .venv/bin/activate
-  #         cmake --build --preset ci
-  #     - name: Test
-  #       run: |
-  #         source .venv/bin/activate
-  #         cd build/ci
-  #         python3 -m pytest --forked --tb=short
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq cmake libgmp-dev libopenmesh-dev libpng-dev libjpeg-dev python3-pip python3-venv
+
+      - name: Set up Python venv
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip --quiet
+          pip install --quiet numpy pytest pytest-forked scipy
+
+      - name: Configure
+        run: |
+          source .venv/bin/activate
+          cmake --preset ci
+
+      - name: Build
+        run: |
+          source .venv/bin/activate
+          cmake --build --preset ci
+
+      - name: Test
+        run: |
+          source .venv/bin/activate
+          cd build/ci
+          python3 -m pytest --forked --tb=short
+
+  macos:
+    name: macOS ARM64
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install cmake gmp open-mesh libpng libjpeg
+
+      - name: Set up Python venv
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip --quiet
+          pip install --quiet numpy pytest pytest-forked scipy
+
+      - name: Configure
+        run: |
+          source .venv/bin/activate
+          cmake --preset ci
+
+      - name: Build
+        run: |
+          source .venv/bin/activate
+          cmake --build --preset ci
+
+      - name: Test
+        run: |
+          source .venv/bin/activate
+          cd build/ci
+          python3 -m pytest --forked --tb=short
 
   windows:
     name: Windows x86_64
@@ -96,4 +105,4 @@ jobs:
       - name: Test
         run: |
           cd build/ci
-          python -m pytest --tb=short
+          python3 -m pytest --tb=short
