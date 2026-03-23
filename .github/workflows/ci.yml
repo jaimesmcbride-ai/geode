@@ -95,7 +95,7 @@ jobs:
             mingw-w64-x86_64-python-numpy
 
       - name: Set up Python test deps
-        run: pip install pytest pytest-forked scipy --quiet
+        run: python -m pip install pytest pytest-forked scipy --quiet
 
       - name: Configure
         run: cmake -G Ninja --preset ci
