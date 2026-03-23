@@ -63,7 +63,7 @@ jobs:
       - name: Build
         run: |
           source .venv/bin/activate
-          cmake --build --preset ci
+          cmake --build --preset ci -- -j2
 
       - name: Test
         run: |
