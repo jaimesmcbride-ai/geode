@@ -44,8 +44,15 @@ static inline __m128i operator|=(__m128i& a, __m128i b) { return a = (a|b); }
 
 // Mark __m128 and __m128i as fundamental types
 } namespace std {
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-specialization"
+#endif
 template<> struct is_fundamental<__m128> : public geode::mpl::true_ {};
 template<> struct is_fundamental<__m128i> : public geode::mpl::true_ {};
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 } namespace geode {
 
 // fast_select(a,b,0) = a, fast_select(a,b,0xffffffff) = b, and anything else is undefined
