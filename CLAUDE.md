@@ -41,16 +41,16 @@ source .venv/bin/activate
 
 Or manually on macOS:
 ```bash
-brew install cmake gmp open-mesh libpng libjpeg
+brew install cmake gmp open-mesh libpng jpeg-turbo
 python3 -m venv .venv && source .venv/bin/activate
-pip install numpy pytest pytest-forked scipy
+pip install -r requirements.txt
 ```
 
 Or manually on Ubuntu/Debian:
 ```bash
 sudo apt install cmake libgmp-dev libopenmesh-dev libpng-dev libjpeg-dev python3-venv
 python3 -m venv .venv && source .venv/bin/activate
-pip install numpy pytest pytest-forked scipy
+pip install -r requirements.txt
 ```
 
 ## Running tests
@@ -63,7 +63,7 @@ python3 -m pytest --forked --tb=short
 - Must run from the build directory so `geode/math/__init__.py` doesn't shadow stdlib `math`
 - `--forked` is still required for process isolation (some tests use random seeds and SIGABRT would kill the runner)
 - `setup.cfg` uses `[tool:pytest]` section
-- **Expected results: 166 passed, 0 failed, 1 skipped** (as of native ARM64 build)
+- **Expected results: 169 passed, 0 failed, 1 skipped** (as of native ARM64 build)
 
 ### Skipped tests
 - `test_worker`: Worker inter-process tests were never completed (skipped since 2017); `Worker.py` is unused elsewhere in the codebase
@@ -157,4 +157,4 @@ Originally built on x86 Linux/macOS with Python 2. Build system was SCons; migra
 - macOS Apple Silicon (ARM64) under Rosetta 2: conditional `GEODE_SSE`, aarch64 in Random123, Accelerate.framework gate (earlier port, now superseded)
 - Python 3.14: PyInt->PyLong, PyString->PyUnicode, PyModule_Create, PyInit_ entry points, numpy 2.x API
 - Python 2->3 runtime: xrange, except syntax, map/filter iterators, cPickle/cStringIO, builtin shadowing by numpy, tryfile str->bytes, cache_method name mangling, uint128 unsigned conversion
-- C++17, modern CMake (3.5+), Homebrew `/usr/local/` and `/opt/homebrew/` paths
+- C++17, modern CMake (3.25+), Homebrew `/usr/local/` and `/opt/homebrew/` paths

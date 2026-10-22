@@ -7,9 +7,9 @@ on:
 jobs:
   ubuntu:
     name: Ubuntu x86_64
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: |
@@ -21,7 +21,7 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip --quiet
-          pip install --quiet numpy pytest pytest-forked scipy
+          pip install --quiet -r requirements.txt
 
       - name: Configure
         run: |
@@ -41,9 +41,9 @@ jobs:
 
   macos:
     name: macOS ARM64
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: brew install cmake gmp open-mesh libpng libjpeg
@@ -53,7 +53,7 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip --quiet
-          pip install --quiet numpy pytest pytest-forked scipy
+          pip install --quiet -r requirements.txt
 
       - name: Configure
         run: |
@@ -78,7 +78,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: msys2/setup-msys2@v2
         with:

@@ -11,121 +11,50 @@ For questions or discussion, email geode-dev@googlegroups.com.
 
 For C++:
 
-* [cmake >= 3.3](https://cmake.org): A build system (GPL)
-* [gmp >= 4.0](http://gmplib.org): Arbitrary precision arithmetic (LGPL)
-* [cblas](http://www.netlib.org/blas/blast-forum/cblas.tgz): C wrappers for BLAS (BSD license)
+* [cmake >= 3.25](https://cmake.org): A build system (BSD)
+* [gmp >= 6](http://gmplib.org): Arbitrary precision arithmetic (LGPL)
+* [libpng >= 1.6](http://www.libpng.org): Lossless image format (optional)
+* [libjpeg-turbo](https://libjpeg-turbo.org): Lossy image format (optional)
+* [OpenMesh >= 11](https://www.graphics.rwth-aachen.de/software/openmesh/): Half-edge meshes (optional)
 
 For Python:
 
-* [python >= 2.7](http://python.org): A scripting language (Python Software Foundation (PSF) license)
-* [numpy >= 1.5](http://numpy.scipy.org): Efficient multidimensional arrays for Python (BSD license)
-* [setuptools >= 0.6](http://pythonhosted.org/setuptools): A packaging system for Python (PSF license)
+* [python >= 3.10](http://python.org): A scripting language (Python Software Foundation (PSF) license)
+* [numpy >= 2](http://numpy.org): Efficient multidimensional arrays for Python (BSD license)
 
-Optional dependencies (see below for how to disable these):
-
-* [py.test >= 2.1](http://pytest.org): Simple python testing (MIT license)
-* [scipy](http://www.scipy.org): Scientific computation for Python (BSD license)
-* [openexr](http://www.openexr.com): High dynamic range floating point image format (BSD license)
-* [libpng](http://www.libpng.org): Lossless image format (Custom noncopyleft license)
-* [libjpeg](http://www.ijg.org): Lossy image format (Custom noncopyleft license)
+Optional, for the tests: pytest >= 9, pytest-forked < 2, scipy (see `requirements.txt`).
 
 Geode makes extensive use of C++11 features, so a relatively recent C++ compiler is necessary.
 
 ### Windows
 
-  This has been built and run successfully with the Visual Studio 2015 preview. We are working to make this more streamlined and robust (as well as fixing the hundreds of compiler warnings), but the following worked for me:
-
-  Install the following dependencies:
-   * WinPython 64bit version 2.7.9.2 (This includes numpy and scipy)
-   * CMake
-   * MPIR (commit 3a9dd527a2f87e6eff8cab8b54b0b1f31e0826fa but tweaked for VS2015)
-   ** This will require installing vsyasm
-   ** Remove definition of snprintf from /build.vc12/cfg.h
-   ** You may need to set Tools->Options->Projects and Solutions->Build and Run->"Maximum number of parallel project builds" to 1 to avoid parallel builds clobbering config headers
-
-   Create a config.py and point gmp to installation of mpir:
-     gmp_libpath = '#/../mpir/build.vc12/x64/Debug'
-     gmp_include='#/../mpir'
-     gmp_publiclibs='mpir.lib'
-
-   Setup Command Prompt environment:
-     Python from:
-       ...\WinPython-64bit-2.7.9.2\scripts\env.bat
-     VS dev tools using:
-       "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\VsDevCmd.bat"
-     Select x64 tools using:
-       "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-
-  Create a build directory separate from the sources (optional, but recommended):
-    mkdir build
-
-   Build with:
-     cmake ../
-     make
-
-   If you wish to install geode to a different location (such as a python
-   virtualenv), add -DCMAKE_BUILD_PREFIX=/path/to/wherever to the cmake command.
-
-   Install with:
-     make install
-
-   To use geode outside of project directory or for test_worker to pass you must add geode to your PYTHONPATH:
-     set PYTHONPATH=<path_to_dir_outside_repo>\geode;%PYTHONPATH%
+Build with MSYS2 MINGW64 (see `.github/workflows/ci.yml` for the package list) and `cmake --preset windows`.
 
 ### Installation
 
-If necessary, dependencies can be installed via one of
+Dependencies can be installed via one of
 
     # Debian/Ubuntu
-    sudo apt install cmake g++ python-dev python-pip python-numpy pkg-config libjpeg-dev libpng-dev zlib1g-dev libgmp-dev
-    sudo apt-get install python-scipy python-pytest libpng-dev libjpeg-dev libopenexr-dev # optional
-    pip install numpy
+    sudo apt install cmake g++ python3-dev python3-venv pkg-config libjpeg-dev libpng-dev libgmp-dev libopenmesh-dev
 
-    # Homebrew (recommended)
-    brew install cmake openexr gfortran python #Note: gfortran brew is now part of gcc, so although previous versions can still be accessed, brew install gcc is the preferred method
-    sudo pip install --upgrade pip setuptools numpy scipy pytest #numpy and scipy can be
+    # Homebrew
+    brew install cmake gmp libpng jpeg-turbo open-mesh python
 
-    # MacPorts (not recommended).  If you have python 2.7, replace py26 with py27.
-    sudo port -v install python26 py26-numpy cmake
-    sudo port -v install py26-scipy py26-py libpng jpeg openexr # optional
-    sudo port -v install gcc47 # If clang is unavailable
+    # then, on either
+    python3 -m venv .venv && source .venv/bin/activate
+    pip install -r requirements.txt
 
-Geode can then be installed from source via
+Geode can then be built from source via
 
     git clone https://github.com/otherlab/geode.git
     cd geode
+    cmake --preset dev && cmake --build --preset dev
 
-    # Install c++ headers and libraries to /usr/local
-    cmake . && make && make install
-
-At this point, you have a choice of either developer mode or install mode
-
-### Install mode
-
-    sudo make install
-
-    This will also install python bindings if enabled.
-
-### Developer mode
-
-The libraries are built into `geode` if you want to use them without installing.  To point python imports to your development tree, run one of
-
-    sudo python setup.py develop
-    python setup.py develop --prefix=$HOME
-
-To link against this built version of geode, add this to your project's own
-CMakeLists.txt:
+The libraries are built into `build/dev`; point `PYTHONPATH` there (or at the build tree's `geode` directory) to import
+them without installing.  To link against the built tree from another CMake project:
 
     include(path/to/geode/CMakeLists.txt)
     target_link_libraries(foo geode)
-
-If you've installed geode, you can instead use:
-
-    find_package(Geode REQUIRED)
-    target_link_libraries(foo geode)
-
-
-which will allow you to develop with geode in C++ as if it was installed.
 
 ### Post install
 
@@ -135,8 +64,8 @@ On linux you may have to update the shared library cache via ldconfig if this is
 
 Unit tests can be run via
 
-    cd geode
-    py.test
+    cd build/dev
+    python -m pytest --forked
 
 ### Extra configuration
 
