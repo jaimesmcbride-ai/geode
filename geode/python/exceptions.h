@@ -52,7 +52,7 @@ register_python_exception(PyObject* pytype) {
 struct GEODE_CORE_CLASS_EXPORT PythonError:public exception {
   typedef exception Base;
   PythonError();
-  virtual ~PythonError() throw ();
+  virtual ~PythonError() noexcept;
   virtual const char* what() const noexcept;
 private:
   mutable string what_;
@@ -62,7 +62,7 @@ private:
   struct GEODE_CORE_CLASS_EXPORT Error : public Base_ { \
     typedef Base_ Base; \
     GEODE_CORE_EXPORT Error(const string& message); \
-    GEODE_CORE_EXPORT virtual ~Error() throw (); \
+    GEODE_CORE_EXPORT virtual ~Error() noexcept; \
   };
 
 typedef std::runtime_error RuntimeError;

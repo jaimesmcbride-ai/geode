@@ -45,6 +45,10 @@ template<class TK,class T> struct HashtableEntry {
     state = EntryDeleted;
   }
 
+  HashtableEntry() = default;
+  HashtableEntry(const HashtableEntry&) = default;
+  HashtableEntry& operator=(const HashtableEntry&) = default;
+
   ~HashtableEntry() {
     destroy();
   }

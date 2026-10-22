@@ -41,7 +41,7 @@ template<class TV,int d> LinearFiniteVolume<TV,d>::LinearFiniteVolume(Array<cons
     if((int)m>(int)d) normals[t] = normal(Dm);
     GEODE_ASSERT(scale>0);
     const_cast_(Dm_inverse[t]) = Dm_ct/scale;
-    Bm_scales[t] = -(T)1/Factorial<d>::value*scale;
+    Bm_scales[t] = -(T)1/T(Factorial<d>::value)*scale;
   }
 }
 
@@ -82,7 +82,7 @@ template<class TV,int d> void LinearFiniteVolume<TV,d>::add_elastic_force(RawArr
   GEODE_ASSERT(X.size()>=nodes_ && F.size()==X.size());
   T mu,lambda;mu_lambda().get(mu,lambda);
   T two_mu = 2*mu;
-  T two_mu_plus_m_lambda = 2*mu+m*lambda;
+  T two_mu_plus_m_lambda = 2*mu+T(m)*lambda;
   for (int t=0;t<elements.size();t++) {
     SymmetricMatrix<T,m> strain_plus_one = symmetric_part(Ds(X,t)*Dm_inverse[t]);
     if ((int)m>(int)d)

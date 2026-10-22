@@ -86,7 +86,7 @@ PythonError::PythonError() {
     throw AssertionError("PythonError thrown without setting a python exception");
 }
 
-PythonError::~PythonError() throw ()
+PythonError::~PythonError() noexcept
 {}
 
 const char* PythonError::what() const noexcept {
@@ -114,7 +114,7 @@ const char* PythonError::what() const noexcept {
 
 #define INSTANTIATE(Error) \
   Error::Error(const string& message) : Base(message) {} \
-  Error::~Error() throw () {}
+  Error::~Error() noexcept {}
 INSTANTIATE(IOError)
 INSTANTIATE(OSError)
 INSTANTIATE(LookupError)

@@ -81,7 +81,7 @@ DelaunayConstraintConflict::DelaunayConstraintConflict(const Vector<int,2> new_e
  , e1(new_e1)
 { }
 
-DelaunayConstraintConflict::~DelaunayConstraintConflict() throw () {}
+DelaunayConstraintConflict::~DelaunayConstraintConflict() noexcept {}
 
 
 // When a BSP leaf face is replaced by a node, update the links to point to the new node.

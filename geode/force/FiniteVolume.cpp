@@ -34,7 +34,7 @@ template<class TV,int d> FiniteVolume<TV,d>::FiniteVolume(StrainMeasure<T,d>& st
   , stress_derivatives_valid(false)
   , definite(false) {
   for (int t=0;t<Be_scales.size();t++)
-    Be_scales[t] = -(T)1/Factorial<d>::value/strain.Dm_inverse[t].determinant();
+    Be_scales[t] = -(T)1/T(Factorial<d>::value)/strain.Dm_inverse[t].determinant();
   isotropic = dynamic_cast<IsotropicConstitutiveModel<T,d>*>(&model);
   anisotropic = dynamic_cast<AnisotropicConstitutiveModel<T,d>*>(&model);
 }
@@ -85,7 +85,7 @@ template<class TV,int d> void FiniteVolume<TV,d>::update_position(Array<const TV
         (F*plasticity->Fp_inverse[t]).fast_singular_value_decomposition(U[t],Fe_hat[t],V_);
       }
       De_inverse_hat[t] = strain->Dm_inverse[t]*plasticity->Fp_inverse[t]*V_;
-      Be_scales[t] = -(T)1/Factorial<d>::value/De_inverse_hat[t].determinant();
+      Be_scales[t] = -(T)1/T(Factorial<d>::value)/De_inverse_hat[t].determinant();
     } else {
       strain->F(X,t).fast_singular_value_decomposition(U[t],Fe_hat[t],V_);
       De_inverse_hat[t] = strain->Dm_inverse[t]*V_;

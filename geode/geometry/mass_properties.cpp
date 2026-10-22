@@ -47,7 +47,7 @@ helper(RawArray<const Vector<int,s> > elements, RawArray<const TV> X) {
     T scaled_element_volume = filled?DX.parallelepiped_measure():StrainMeasure<T,d>::Ds(X,nodes).parallelepiped_measure();
     scaled_volume += scaled_element_volume;
     scaled_center_times_volume += scaled_element_volume*DX.column_sum();}
-  props.volume = (T)1/Factorial<d+filled>::value*scaled_volume;
+  props.volume = (T)1/T(Factorial<d+filled>::value)*scaled_volume;
   if (!props.volume)
     GEODE_FATAL_ERROR("zero volume");
   props.center = base+(T)1/(d+1+filled)/scaled_volume*scaled_center_times_volume;
@@ -60,7 +60,7 @@ helper(RawArray<const Vector<int,s> > elements, RawArray<const TV> X) {
       for(int i=0;i<nodes.m;i++) DX.set_column(i,X[nodes[i]]-props.center);
       T scaled_element_volume = filled?DX.parallelepiped_measure():StrainMeasure<T,d>::Ds(X,nodes).parallelepiped_measure();
       props.inertia_tensor += scaled_element_covariance(scaled_element_volume,DX);}
-  props.inertia_tensor = inertia_tensor_from_covariance((T)1/Factorial<d+2+filled>::value*props.inertia_tensor);
+  props.inertia_tensor = inertia_tensor_from_covariance((T)1/T(Factorial<d+2+filled>::value)*props.inertia_tensor);
   return props;
 }
 
