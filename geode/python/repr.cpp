@@ -11,7 +11,7 @@ string repr(PyObject& x) {
 #ifdef GEODE_PYTHON
   return from_python<string>(steal_ref_check(PyObject_Repr(&x)));
 #else
-  return format("<object of type %s>",x.ob_type->tp_name);
+  return format("<object of type %s>",Py_TYPE(&x)->tp_name);
 #endif
 }
 

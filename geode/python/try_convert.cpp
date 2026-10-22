@@ -11,7 +11,7 @@ void set_to_python_failed(const type_info& type) {
 }
 
 void from_python_failed(PyObject* object, const type_info& type) {
-  throw TypeError(format("Python type %s can't be converted to C++ type %s: no from_python overload exists",object->ob_type->tp_name,type.name()));
+  throw TypeError(format("Python type %s can't be converted to C++ type %s: no from_python overload exists",Py_TYPE(object)->tp_name,type.name()));
 }
 
 #endif

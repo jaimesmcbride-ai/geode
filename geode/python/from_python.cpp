@@ -23,7 +23,7 @@ long FromPython<long>::convert(PyObject* object) {
   Py_DECREF(y);
   if (eq<0) throw_python_error();
   if (!eq) {
-    PyErr_Format(PyExc_TypeError,"expected integer, got %s",object->ob_type->tp_name);
+    PyErr_Format(PyExc_TypeError,"expected integer, got %s",Py_TYPE(object)->tp_name);
     throw_python_error();
   }
   return i;

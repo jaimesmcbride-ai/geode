@@ -79,7 +79,7 @@ static Ref<PropBase> make_prop_shape(const string& n, PyObject* value,
   try {
     a = numpy_from_any(value,0,0,0,0);
   } catch (const exception& e) {
-    throw TypeError(format("make_prop_shape: numpy array convertible type expected, got %s",a->ob_type->tp_name));
+    throw TypeError(format("make_prop_shape: numpy array convertible type expected, got %s",Py_TYPE(a)->tp_name));
   }
   switch (PyArray_TYPE((PyArrayObject*)a.get())) {
     #define TYPE_CASE(E,T) \

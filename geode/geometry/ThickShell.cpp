@@ -44,7 +44,7 @@ static Array<const Vector<int,2>> py_segs(Ref<> mesh) {
   else if (auto* m = python_cast<SegmentSoup*>(&*mesh))
     return m->elements;
   else
-    throw TypeError(format("ThickShell: expected SegmentSoup or TriangleSoup, got %s",mesh->ob_type->tp_name));
+    throw TypeError(format("ThickShell: expected SegmentSoup or TriangleSoup, got %s",Py_TYPE(&*mesh)->tp_name));
 }
 
 ThickShell::ThickShell(Ref<> mesh, Array<const TV> X, Array<const T> radii)

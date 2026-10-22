@@ -853,7 +853,7 @@ static void write_mesh_py(const string& filename, PyObject* mesh, RawArray<const
   else if (auto* top = python_cast<TriangleTopology*>(mesh))
     write_mesh(filename,*top,X);
   else
-    throw TypeError(format("expected TriangleSoup or TriangleTopology, got %s",mesh->ob_type->tp_name));
+    throw TypeError(format("expected TriangleSoup or TriangleTopology, got %s",Py_TYPE(&*mesh)->tp_name));
 }
 
 }

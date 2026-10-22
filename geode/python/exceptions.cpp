@@ -59,12 +59,12 @@ void throw_python_error() { // python error must already be set
 }
 
 void throw_type_error(PyObject* object, PyTypeObject* type) {
-  PyErr_Format(PyExc_TypeError,"%s expected (got %s)",type->tp_name,object->ob_type->tp_name);
+  PyErr_Format(PyExc_TypeError,"%s expected (got %s)",type->tp_name,Py_TYPE(object)->tp_name);
   throw PythonError();
 }
 
 void unregistered_python_type(PyObject* object, PyTypeObject* type, const char* function) {
-  PyErr_Format(PyExc_TypeError,"can't convert %s to unregistered type deriving from %s in function %s",object->ob_type->tp_name,type->tp_name,function);
+  PyErr_Format(PyExc_TypeError,"can't convert %s to unregistered type deriving from %s in function %s",Py_TYPE(object)->tp_name,type->tp_name,function);
   throw PythonError();
 }
 

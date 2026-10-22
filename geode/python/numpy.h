@@ -46,40 +46,9 @@ GEODE_CORE_EXPORT PyTypeObject* numpy_array_type();
 GEODE_CORE_EXPORT PyTypeObject* numpy_recarray_type();
 #endif
 
-// Stay compatible with old versions of numpy
-#ifndef NPY_ARRAY_WRITEABLE
-#define NPY_ARRAY_WRITEABLE NPY_WRITEABLE
-#define NPY_ARRAY_FORCECAST NPY_FORCECAST
-#define NPY_ARRAY_CARRAY_RO NPY_CARRAY_RO
-#define NPY_ARRAY_CARRAY NPY_CARRAY
-#define NPY_ARRAY_C_CONTIGUOUS NPY_C_CONTIGUOUS
-#endif
-
-// The numpy API changed incompatibly without incrementing the NPY_VERSION define.  Therefore, we use the
-// fact that PyArray_BASE switched from being a macro in the old version to an inline function in the new.
-// PyArray_SetBaseObject was added as a macro in NumPy 1.7; PyArray_CLEARFLAGS/ENABLEFLAGS as inline
-// functions in NumPy 1.7 as well.  Only define our own shims for truly old NumPy that lacks all of these.
-#if defined(PyArray_BASE) && !defined(PyArray_CLEARFLAGS) && !defined(PyArray_SetBaseObject)
-static inline void PyArray_CLEARFLAGS(PyArrayObject* array,int flags) {
-  PyArray_FLAGS(array) &= ~flags;
-}
-static inline void PyArray_ENABLEFLAGS(PyArrayObject* array,int flags) {
-  PyArray_FLAGS(array) |= flags;
-}
-static inline void PyArray_SetBaseObject(PyArrayObject* array,PyObject* base) {
-  PyArray_BASE(array) = base;
-}
-#endif
-
 // Compatibility shim for PyArray_Descr subarray/fields access.
 // NumPy 2.0 moved these fields from PyArray_Descr into _PyArray_LegacyDescr.
-// NumPy 1.x: fields are directly on PyArray_Descr.
-// Detect NumPy 2.x via NPY_VERSION (0x2000000+); NPY_2_0_API_VERSION is not defined in 1.x headers.
-#if NPY_VERSION >= 0x2000000
 #define GEODE_NPY_LEGACY_DESCR(d) ((_PyArray_LegacyDescr*)(d))
-#else
-#define GEODE_NPY_LEGACY_DESCR(d) (d)
-#endif
 
 // Use an unnamed namespace since a given instantiation of these functions should appear in only one object file
 namespace {
