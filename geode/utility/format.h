@@ -71,7 +71,7 @@ static inline const char* format_sanitize(const string& s) {
 // #define format(fmt,...) format_helper(fmt, GEODE_MAP(format_sanitize, __VA_ARGS__))
 
 // The format attribute sanity checks the format string, but can't verify it was used with a matching types in Args (only supports varargs)
-template<class... Args> GEODE_FORMAT_LIKE_PRINTF(1,0) static inline string format(const char* format, const Args&... args) {
+template<class... Args> GEODE_FORMAT_LIKE_PRINTF(1,0) static inline string format(const char* format, Args&&... args) {
   GEODE_GNUC_ONLY(_Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wformat-nonliteral\""))
   return format_helper(format,format_sanitize(args)...);
   GEODE_GNUC_ONLY(_Pragma("GCC diagnostic pop"))

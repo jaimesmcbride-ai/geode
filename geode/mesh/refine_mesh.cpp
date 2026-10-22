@@ -56,7 +56,6 @@ static real longest_distance2(const Vector<Vec2,4> x, const Vec2 p) {
 }
 
 struct EdgeAndLength {
-  EdgeAndLength() = default;
   HalfedgeId hid;
   real sqr_length;
   inline friend bool operator<(const EdgeAndLength& lhs, const EdgeAndLength& rhs) {

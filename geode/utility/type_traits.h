@@ -36,7 +36,9 @@ using std::make_unsigned;
 using std::remove_const;
 using std::remove_pointer;
 using std::remove_reference;
-using std::result_of;
+// std::result_of was removed in C++20; keep the F(Args...) spelling on top of std::invoke_result
+template<class F> struct result_of;
+template<class F,class... Args> struct result_of<F(Args...)> : std::invoke_result<F,Args...> {};
 
 using std::is_trivially_destructible;
 

@@ -100,7 +100,7 @@ macro(ADD_GEODE_MODULE _name)
 
     set_property(
       TARGET ${_name}
-      PROPERTY CXX_STANDARD 17
+      PROPERTY CXX_STANDARD 20
     )
 
     target_compile_definitions(
