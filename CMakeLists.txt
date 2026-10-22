@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.25)
 project(geode)
 
 option(GEODE_REQUIRE_PYTHON "Generate an error if python bindings won't be built instead of silently disabling them" FALSE)
