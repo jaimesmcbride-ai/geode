@@ -15,7 +15,7 @@
 find_package(PkgConfig)
 
 # Use FindPython3 (modern CMake) instead of deprecated FindPythonInterp
-find_package(Python3 COMPONENTS Interpreter Development NumPy)
+find_package(Python3 3.10 COMPONENTS Interpreter Development NumPy)
 
 if (Python3_Interpreter_FOUND)
   set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
@@ -25,45 +25,12 @@ if (Python3_Interpreter_FOUND)
     set(NUMPY_INCLUDE_DIRS ${Python3_NumPy_INCLUDE_DIRS})
     message(STATUS "Numpy found in ${NUMPY_INCLUDE_DIRS}")
   else()
-    execute_process(
-      COMMAND
-        ${PYTHON_EXECUTABLE} -c "import numpy, sys;sys.stdout.write(numpy.get_include())"
-      OUTPUT_VARIABLE NUMPY_INCLUDE_DIRS
-      RESULT_VARIABLE _numpy_result
-    )
-    if (_numpy_result EQUAL 0)
-      message(STATUS "Numpy found in ${NUMPY_INCLUDE_DIRS}")
-    else()
-      message(WARNING "NumPy not found")
-    endif()
+    message(WARNING "NumPy not found")
   endif()
 
   if (Python3_Development_FOUND)
     set(PYTHON_INCLUDE_DIRS ${Python3_INCLUDE_DIRS})
     set(PYTHON_LIBRARIES ${Python3_LIBRARIES})
-  else()
-    # Fallback to sysconfig
-    execute_process(
-      COMMAND
-        ${PYTHON_EXECUTABLE} -c "import sysconfig, sys;sys.stdout.write(sysconfig.get_path('include'))"
-      OUTPUT_VARIABLE PYTHON_INCLUDE_DIRS
-    )
-    execute_process(
-      COMMAND
-        ${PYTHON_EXECUTABLE} -c "import sysconfig, sys;sys.stdout.write(sysconfig.get_config_var('LIBDIR'))"
-      OUTPUT_VARIABLE PYTHON_LIBRARY_DIRS
-    )
-    execute_process(
-      COMMAND
-        ${PYTHON_EXECUTABLE} -c "import sysconfig, sys;sys.stdout.write(sysconfig.get_config_var('LDLIBRARY'))"
-      OUTPUT_VARIABLE PYTHON_LDLIBRARY
-    )
-    find_library(_PYTHON_LIBRARIES NAMES ${PYTHON_LDLIBRARY} python3 PATHS ${PYTHON_LIBRARY_DIRS} NO_DEFAULT_PATH)
-    if(_PYTHON_LIBRARIES)
-      set(PYTHON_LIBRARIES ${_PYTHON_LIBRARIES})
-    else()
-      message(WARNING " Unable to find full path to python lib")
-    endif()
   endif()
 else()
   message(WARNING " No python3 interpreter found!")

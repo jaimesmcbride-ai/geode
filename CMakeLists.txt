@@ -12,7 +12,7 @@ include(GeodeSupport.cmake)
 
 find_package(PkgConfig)
 find_package(JPEG)
-find_package(PNG)
+find_package(PNG 1.6)
 
 # Detect Debian/Ubuntu multiarch library suffix
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
@@ -40,6 +40,12 @@ if(NOT GMP_LIBRARIES OR NOT GMP_INCLUDE)
 endif()
 if(GMP_LIBRARIES AND GMP_INCLUDE)
   set(GMP_FOUND TRUE)
+  # GMP 6 or newer (mpn_neg and mpn_sqr are used unconditionally)
+  file(STRINGS "${GMP_INCLUDE}/gmp.h" _gmp_ver REGEX "^#define __GNU_MP_VERSION +[0-9]+")
+  string(REGEX MATCH "[0-9]+$" _gmp_major "${_gmp_ver}")
+  if(_gmp_major AND _gmp_major LESS 6)
+    message(FATAL_ERROR "GMP >= 6 required, found ${_gmp_major} in ${GMP_INCLUDE}")
+  endif()
 endif()
 
 if (GMP_FOUND)
@@ -68,6 +74,16 @@ find_path(
 
 if (OPENMESH_CORE_LIBRARY AND OPENMESH_TOOLS_LIBRARY AND OPENMESH_INCLUDE)
   set(OPENMESH_FOUND TRUE)
+  # OpenMesh 11 or newer: OM_VERSION is 0x0B0000 for 11.0
+  file(STRINGS "${OPENMESH_INCLUDE}/OpenMesh/Core/System/config.h" _om_ver REGEX "^#define OM_VERSION +0x[0-9A-Fa-f]+")
+  string(REGEX MATCH "0x[0-9A-Fa-f]+$" _om_hex "${_om_ver}")
+  if(_om_hex)
+    math(EXPR _om_major "(${_om_hex} & 0xf0000) >> 16")
+    if(_om_major LESS 11)
+      message(WARNING "OpenMesh >= 11 required, found ${_om_major} in ${OPENMESH_INCLUDE}; OpenMesh functionality disabled")
+      set(OPENMESH_FOUND FALSE)
+    endif()
+  endif()
 endif()
 
 if (OPENMESH_FOUND)
