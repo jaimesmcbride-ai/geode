@@ -89,7 +89,7 @@ PythonError::PythonError() {
 PythonError::~PythonError() throw ()
 {}
 
-const char* PythonError::what() const throw() {
+const char* PythonError::what() const noexcept {
   if (!what_.size()) {
     PyObject *type,*value,*traceback;
     PyErr_Fetch(&type,&value,&traceback);

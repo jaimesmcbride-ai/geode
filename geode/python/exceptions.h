@@ -53,7 +53,7 @@ struct GEODE_CORE_CLASS_EXPORT PythonError:public exception {
   typedef exception Base;
   PythonError();
   virtual ~PythonError() throw ();
-  virtual const char* what() const throw();
+  virtual const char* what() const noexcept;
 private:
   mutable string what_;
 };
