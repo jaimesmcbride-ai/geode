@@ -14,7 +14,7 @@ using namespace geode;
 #ifdef GEODE_PYTHON
 
 PyTypeObject Buffer::pytype = {
-    PyVarObject_HEAD_INIT(&PyType_Type, 0)
+    .ob_base = PyVarObject_HEAD_INIT(&PyType_Type, 0)
     .tp_name = "geode.Buffer",
     .tp_basicsize = sizeof(Buffer),
     .tp_dealloc = (destructor)free_buffer,

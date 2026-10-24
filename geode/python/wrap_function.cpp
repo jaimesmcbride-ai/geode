@@ -28,7 +28,7 @@ struct PythonFunction {
 };
 
 PyTypeObject PythonFunction::pytype = {
-  PyVarObject_HEAD_INIT(&PyType_Type, 0)
+  .ob_base = PyVarObject_HEAD_INIT(&PyType_Type, 0)
   .tp_name = "geode.Function",
   .tp_basicsize = sizeof(PythonFunction),
   .tp_dealloc = PythonFunction::dealloc,

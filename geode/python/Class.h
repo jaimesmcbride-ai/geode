@@ -57,7 +57,7 @@ GEODE_CORE_EXPORT void add_descriptor(PyTypeObject* type,const char* name,PyObje
 // Should appear in the .cpp to define the fields declared by GEODE_DECLARE_TYPE(GEODE_SOMETHING_EXPORT)
 #define GEODE_DEFINE_TYPE(...) \
   PyTypeObject __VA_ARGS__::pytype = { \
-    PyVarObject_HEAD_INIT(&PyType_Type, 0) \
+    .ob_base = PyVarObject_HEAD_INIT(&PyType_Type, 0) \
     .tp_name = "geode_default_name:" __FILE__ ":" #__VA_ARGS__, \
     .tp_basicsize = sizeof(geode::PyObject)+sizeof(__VA_ARGS__), \
     .tp_dealloc = geode::Class<__VA_ARGS__>::dealloc, \
